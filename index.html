@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>我的 AI 聊天前端</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: rgba(255,255,255,.92);
+      --card: #ffffff;
+      --text: #182033;
+      --muted: #7a8497;
+      --line: #e5e9f2;
+      --primary: #111827;
+      --primaryText: #fff;
+      --bubbleUser: #111827;
+      --bubbleUserText: #fff;
+      --bubbleAI: #ffffff;
+      --danger: #dc2626;
+      --shadow: 0 18px 55px rgba(15, 23, 42, .09);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,.14), transparent 32%),
+        radial-gradient(circle at top right, rgba(16,185,129,.10), transparent 28%),
+        var(--bg);
+      overflow: hidden;
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--primary);
+      color: var(--primaryText);
+      font-weight: 760;
+      padding: 10px 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button.secondary {
+      background: #eef1f6;
+      color: var(--text);
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    button.danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .app {
+      height: 100dvh;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 0;
+    }
+
+    aside {
+      height: 100dvh;
+      padding: calc(14px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));
+      border-right: 1px solid rgba(229,233,242,.88);
+      background: rgba(246,247,251,.76);
+      backdrop-filter: blur(18px);
+      overflow: auto;
+    }
+
+    main {
+      height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-width: 0;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.05em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .settings, .sessionBox {
+      background: var(--panel);
+      border: 1px solid rgba(229,233,242,.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 13px;
+      margin-bottom: 12px;
+    }
+
+    .boxTitle {
+      font-size: 13px;
+      font-weight: 850;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-weight: 780;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 11px 12px;
+      background: rgba(255,255,255,.9);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #a7baff;
+      box-shadow: 0 0 0 4px rgba(37,99,235,.08);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .topbar {
+      padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(229,233,242,.88);
+      background: rgba(246,247,251,.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbarTitle {
+      min-width: 0;
+    }
+
+    .topbarTitle strong {
+      display: block;
+      font-size: 17px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .topbarTitle span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .menuBtn { display: none; }
+
+    .chat {
+      overflow: auto;
+      padding: 18px 16px 24px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 880px;
+      margin: 0 auto 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .message.user { justify-content: flex-end; }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 12px;
+      color: #fff;
+      background: var(--primary);
+      flex: 0 0 auto;
+      margin-top: 4px;
+    }
+
+    .message.user .avatar { display: none; }
+
+    .bubble {
+      max-width: min(760px, 88%);
+      border-radius: 23px;
+      padding: 13px 15px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(15,23,42,.06);
+      background: var(--bubbleAI);
+    }
+
+    .message.user .bubble {
+      background: var(--bubbleUser);
+      color: var(--bubbleUserText);
+      border-color: var(--bubbleUser);
+    }
+
+    .bubble.empty::after {
+      content: "▍";
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink { 50% { opacity: .2; } }
+
+    .composer {
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(229,233,242,.88);
+      background: rgba(246,247,251,.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .composerInner {
+      max-width: 920px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    #promptInput {
+      min-height: 48px;
+      max-height: 180px;
+      resize: none;
+      border-radius: 22px;
+      background: #fff;
+      font-size: 15px;
+    }
+
+    .hint {
+      max-width: 920px;
+      margin: 7px auto 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .sessionItem {
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 17px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .sessionItem.active {
+      border-color: #111827;
+      box-shadow: inset 0 0 0 1px #111827;
+    }
+
+    .sessionItem strong {
+      display: block;
+      font-size: 13px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .sessionItem span {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 14px;
+      right: 14px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      z-index: 200;
+      margin: auto;
+      max-width: 760px;
+      display: none;
+      background: #111827;
+      color: #fff;
+      border-radius: 22px;
+      padding: 13px 15px;
+      box-shadow: 0 22px 70px rgba(0,0,0,.26);
+      line-height: 1.45;
+    }
+
+    .toast.show { display: block; }
+
+    .mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.38);
+      z-index: 80;
+    }
+
+    @media (max-width: 840px) {
+      .app { grid-template-columns: 1fr; }
+
+      aside {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: min(86vw, 360px);
+        z-index: 100;
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+      }
+
+      aside.open { transform: translateX(0); }
+      .mask.show { display: block; }
+      .menuBtn { display: inline-flex; }
+      .topbar { padding-left: 12px; }
+      .bubble { max-width: 92%; }
+      .composerInner { grid-template-columns: 1fr; }
+      #sendBtn, #stopBtn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mask" id="mask"></div>
+
+  <div class="app">
+    <aside id="sidebar">
+      <div class="brand">
+        <div>
+          <h1>AI Chat</h1>
+          <p>自己的极简流式聊天前端</p>
+        </div>
+        <button class="ghost menuBtn" id="closeSideBtn">关闭</button>
+      </div>
+
+      <section class="settings">
+        <div class="boxTitle">接口设置 <span id="connectionStatus">未测试</span></div>
+
+        <label>
+          API Base URL
+          <input id="baseUrlInput" placeholder="https://api.openai.com/v1" />
+        </label>
+
+        <label>
+          API Key
+          <input id="apiKeyInput" type="password" placeholder="sk-..." autocomplete="off" />
+        </label>
+
+        <label>
+          模型
+          <select id="modelSelect"></select>
+        </label>
+
+        <label>
+          手动模型名
+          <input id="manualModelInput" placeholder="比如 gpt-4.1-mini / deepseek-chat" />
+        </label>
+
+        <div class="row">
+          <label>
+            温度
+            <input id="temperatureInput" type="number" min="0" max="2" step="0.1" />
+          </label>
+          <label>
+            最大输出
+            <input id="maxTokensInput" type="number" min="1" step="1" />
+          </label>
+        </div>
+
+        <label>
+          系统提示词
+          <textarea id="systemPromptInput" placeholder="比如：你是一个温柔、简洁、会陪我读小说的助手。"></textarea>
+        </label>
+
+        <div class="actions">
+          <button id="saveSettingsBtn">保存设置</button>
+          <button class="secondary" id="fetchModelsBtn">拉取模型</button>
+          <button class="ghost" id="testBtn">测试连接</button>
+        </div>
+      </section>
+
+      <section class="sessionBox">
+        <div class="boxTitle">会话</div>
+        <div class="actions" style="margin-bottom:10px">
+          <button id="newChatBtn">＋ 新聊天</button>
+          <button class="danger" id="clearChatBtn">清空当前</button>
+        </div>
+        <div id="sessionList"></div>
+      </section>
+
+      <section class="settings">
+        <div class="boxTitle">数据</div>
+        <div class="actions">
+          <button class="secondary" id="exportBtn">导出聊天</button>
+          <button class="ghost" id="importBtn">导入聊天</button>
+        </div>
+        <input id="importFile" type="file" accept="application/json,.json" hidden />
+      </section>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <button class="secondary menuBtn" id="openSideBtn">☰ 设置</button>
+        <div class="topbarTitle">
+          <strong id="chatTitle">新聊天</strong>
+          <span id="modelStatus">还没有选择模型</span>
+        </div>
+        <button class="ghost" id="copyLastBtn">复制最后回复</button>
+      </header>
+
+      <section class="chat" id="chat"></section>
+
+      <footer class="composer">
+        <div class="composerInner">
+          <textarea id="promptInput" placeholder="输入消息。Shift + Enter 换行，Enter 发送。"></textarea>
+          <div class="actions" style="margin:0">
+            <button id="sendBtn">发送</button>
+            <button class="danger" id="stopBtn" disabled>停止</button>
+          </div>
+        </div>
+        <div class="hint">提示：直连 API Key 只适合自己用。公开分享网页前，请改成 Cloudflare Worker 代理，避免泄露 Key。</div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORE_KEY = "my-ai-stream-chat-v1";
+    const DEFAULT_SETTINGS = {
+      baseUrl: "https://api.openai.com/v1",
+      apiKey: "",
+      model: "",
+      temperature: 0.7,
+      maxTokens: 1200,
+      systemPrompt: "你是一个审美简洁、回答自然、会流式陪用户聊天和阅读的 AI 助手。"
+    };
+
+    let state = loadState();
+    let abortController = null;
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => [...document.querySelectorAll(s)];
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+
+      return {
+        settings: { ...DEFAULT_SETTINGS },
+        models: [],
+        activeSessionId: "default",
+        sessions: [{ id: "default", title: "新聊天", createdAt: new Date().toISOString(), messages: [] }]
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    }
+
+    function normalizeBaseUrl(url) {
+      return String(url || "").trim().replace(/\/+$/, "");
+    }
+
+    function activeSession() {
+      let session = state.sessions.find(s => s.id === state.activeSessionId);
+      if (!session) {
+        session = state.sessions[0];
+        state.activeSessionId = session.id;
+      }
+      return session;
+    }
+
+    function toast(message) {
+      const el = $("#toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.remove("show"), 4200);
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function fillSettings() {
+      $("#baseUrlInput").value = state.settings.baseUrl || "";
+      $("#apiKeyInput").value = state.settings.apiKey || "";
+      $("#manualModelInput").value = state.settings.model || "";
+      $("#temperatureInput").value = state.settings.temperature ?? 0.7;
+      $("#maxTokensInput").value = state.settings.maxTokens ?? 1200;
+      $("#systemPromptInput").value = state.settings.systemPrompt || "";
+      renderModels();
+    }
+
+    function readSettingsFromForm() {
+      const selected = $("#modelSelect").value;
+      const manual = $("#manualModelInput").value.trim();
+      state.settings = {
+        baseUrl: normalizeBaseUrl($("#baseUrlInput").value),
+        apiKey: $("#apiKeyInput").value.trim(),
+        model: manual || selected,
+        temperature: Number($("#temperatureInput").value || 0.7),
+        maxTokens: Number($("#maxTokensInput").value || 1200),
+        systemPrompt: $("#systemPromptInput").value.trim()
+      };
+      saveState();
+      renderHeader();
+    }
+
+    function renderModels() {
+      const modelSelect = $("#modelSelect");
+      const models = state.models || [];
+      const current = state.settings.model || "";
+      modelSelect.innerHTML = `<option value="">选择模型 / 或手动输入</option>` + models.map(m => {
+        const id = typeof m === "string" ? m : m.id;
+        return `<option value="${escapeHtml(id)}" ${id === current ? "selected" : ""}>${escapeHtml(id)}</option>`;
+      }).join("");
+    }
+
+    function renderHeader() {
+      const session = activeSession();
+      $("#chatTitle").textContent = session.title || "新聊天";
+      $("#modelStatus").textContent = state.settings.model ? `${state.settings.model} · ${state.settings.baseUrl || "未设置 URL"}` : "还没有选择模型";
+    }
+
+    function renderSessions() {
+      $("#sessionList").innerHTML = state.sessions.map(session => {
+        const last = session.messages.at(-1)?.content || "没有消息";
+        return `
+          <div class="sessionItem ${session.id === state.activeSessionId ? "active" : ""}" data-session-id="${session.id}">
+            <strong>${escapeHtml(session.title || "新聊天")}</strong>
+            <span>${escapeHtml(last.slice(0, 42))}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderChat() {
+      const session = activeSession();
+      const chat = $("#chat");
+
+      if (!session.messages.length) {
+        chat.innerHTML = `
+          <div class="message">
+            <div class="avatar">AI</div>
+            <div class="bubble">你好。这里是你的私人 AI 前端。\n\n先在左边填 API URL、Key 和模型，点“测试连接”或“拉取模型”，然后就可以开始流式聊天。</div>
+          </div>
+        `;
+        renderHeader();
+        renderSessions();
+        return;
+      }
+
+      chat.innerHTML = session.messages.map(msg => messageHTML(msg.role, msg.content)).join("");
+      renderHeader();
+      renderSessions();
+      scrollBottom();
+    }
+
+    function messageHTML(role, content, extraClass = "") {
+      if (role === "user") {
+        return `<div class="message user"><div class="bubble ${extraClass}">${escapeHtml(content)}</div></div>`;
+      }
+      return `<div class="message assistant"><div class="avatar">AI</div><div class="bubble ${extraClass}">${escapeHtml(content)}</div></div>`;
+    }
+
+    function appendMessageElement(role, content, extraClass = "") {
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = messageHTML(role, content, extraClass);
+      const el = wrapper.firstElementChild;
+      $("#chat").appendChild(el);
+      scrollBottom();
+      return el.querySelector(".bubble");
+    }
+
+    function scrollBottom() {
+      const chat = $("#chat");
+      requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
+    }
+
+    function buildMessagesForApi(userText) {
+      const session = activeSession();
+      const messages = [];
+      const system = state.settings.systemPrompt?.trim();
+      if (system) messages.push({ role: "system", content: system });
+      messages.push(...session.messages.map(m => ({ role: m.role, content: m.content })));
+      messages.push({ role: "user", content: userText });
+      return messages;
+    }
+
+    async function fetchModels() {
+      readSettingsFromForm();
+      if (!state.settings.baseUrl || !state.settings.apiKey) return toast("先填写 Base URL 和 API Key。 ");
+
+      $("#connectionStatus").textContent = "拉取中";
+      try {
+        const res = await fetch(`${state.settings.baseUrl}/models`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${state.settings.apiKey}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        const text = await res.text();
+        if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
+
+        const json = JSON.parse(text);
+        const models = Array.isArray(json.data) ? json.data.map(m => ({ id: m.id })).sort((a,b) => a.id.localeCompare(b.id)) : [];
+        state.models = models;
+        if (!state.settings.model && models[0]) state.settings.model = models[0].id;
+        saveState();
+        renderModels();
+        fillSettings();
+        $("#connectionStatus").textContent = `已拉取 ${models.length}`;
+        toast(`已拉取 ${models.length} 个模型。`);
+      } catch (error) {
+        $("#connectionStatus").textContent = "失败";
+        toast("拉取模型失败：可能是 Key 错、URL 错，或这个 API 不允许浏览器直连。可以改用 Cloudflare Worker 代理。详情看控制台。 ");
+        console.error(error);
+      }
+    }
+
+    async function testConnection() {
+      readSettingsFromForm();
+      if (!state.settings.baseUrl || !state.settings.apiKey) return toast("先填写 Base URL 和 API Key。 ");
+      $("#connectionStatus").textContent = "测试中";
+      try {
+        const res = await fetch(`${state.settings.baseUrl}/models`, {
+          headers: { "Authorization": `Bearer ${state.settings.apiKey}` }
+        });
+        if (!res.ok) throw new Error(await res.text());
+        $("#connectionStatus").textContent = "可用";
+        toast("连接成功。现在可以聊天。 ");
+      } catch (error) {
+        $("#connectionStatus").textContent = "失败";
+        toast("连接失败：如果 URL 和 Key 没错，大概率是 CORS 限制，需要 Cloudflare Worker 代理。 ");
+        console.error(error);
+      }
+    }
+
+    async function sendMessage() {
+      readSettingsFromForm();
+      const input = $("#promptInput");
+      const userText = input.value.trim();
+      if (!userText) return;
+      if (!state.settings.baseUrl || !state.settings.apiKey || !state.settings.model) {
+        return toast("先在左边填 Base URL、API Key 和模型。 ");
+      }
+
+      const session = activeSession();
+      if (session.messages.length === 0) session.title = userText.slice(0, 22) || "新聊天";
+      const messagesForApi = buildMessagesForApi(userText);
+
+      session.messages.push({ role: "user", content: userText, createdAt: new Date().toISOString() });
+      saveState();
+      input.value = "";
+      renderChat();
+
+      const bubble = appendMessageElement("assistant", "", "empty");
+      let assistantText = "";
+
+      abortController = new AbortController();
+      $("#sendBtn").disabled = true;
+      $("#stopBtn").disabled = false;
+
+      try {
+        const body = {
+          model: state.settings.model,
+          messages: messagesForApi,
+          stream: true,
+          temperature: state.settings.temperature,
+          max_tokens: state.settings.maxTokens
+        };
+
+        const res = await fetch(`${state.settings.baseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${state.settings.apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body),
+          signal: abortController.signal
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(errText || `HTTP ${res.status}`);
+        }
+
+        if (!res.body) throw new Error("这个浏览器没有拿到流式响应 body。 ");
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const parts = buffer.split("\n\n");
+          buffer = parts.pop() || "";
+
+          for (const part of parts) {
+            const lines = part.split("\n").map(line => line.trim()).filter(Boolean);
+            for (const line of lines) {
+              if (!line.startsWith("data:")) continue;
+              const data = line.slice(5).trim();
+              if (data === "[DONE]") continue;
+
+              try {
+                const json = JSON.parse(data);
+                const delta = json.choices?.[0]?.delta?.content || "";
+                if (delta) {
+                  assistantText += delta;
+                  bubble.classList.remove("empty");
+                  bubble.textContent = assistantText;
+                  scrollBottom();
+                }
+              } catch (e) {}
+            }
+          }
+        }
+
+        if (!assistantText) assistantText = "（没有收到内容。可能这个模型或接口返回格式不是 Chat Completions SSE。）";
+        session.messages.push({ role: "assistant", content: assistantText, createdAt: new Date().toISOString() });
+        saveState();
+        renderChat();
+      } catch (error) {
+        if (error.name === "AbortError") {
+          assistantText = assistantText || "（已停止）";
+          session.messages.push({ role: "assistant", content: assistantText, createdAt: new Date().toISOString() });
+          saveState();
+          renderChat();
+          toast("已停止输出。 ");
+        } else {
+          bubble.classList.remove("empty");
+          bubble.textContent = "出错了：" + error.message;
+          toast("发送失败。可能是 CORS、Key、模型名、额度，或该接口不是 /chat/completions 格式。 ");
+          console.error(error);
+        }
+      } finally {
+        abortController = null;
+        $("#sendBtn").disabled = false;
+        $("#stopBtn").disabled = true;
+      }
+    }
+
+    function newChat() {
+      const session = { id: uid(), title: "新聊天", createdAt: new Date().toISOString(), messages: [] };
+      state.sessions.unshift(session);
+      state.activeSessionId = session.id;
+      saveState();
+      renderChat();
+      closeSidebarOnMobile();
+    }
+
+    function clearCurrentChat() {
+      const session = activeSession();
+      if (!confirm("确定清空当前聊天吗？")) return;
+      session.messages = [];
+      session.title = "新聊天";
+      saveState();
+      renderChat();
+    }
+
+    function copyLastReply() {
+      const last = [...activeSession().messages].reverse().find(m => m.role === "assistant");
+      if (!last) return toast("还没有 AI 回复可以复制。 ");
+      navigator.clipboard.writeText(last.content).then(() => toast("已复制最后一条 AI 回复。 "));
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ai-chat-backup-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (!imported.settings || !imported.sessions) throw new Error("格式不对");
+          state = imported;
+          saveState();
+          fillSettings();
+          renderChat();
+          toast("导入成功。 ");
+        } catch (e) {
+          toast("导入失败：这不是有效的聊天备份。 ");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function openSidebar() {
+      $("#sidebar").classList.add("open");
+      $("#mask").classList.add("show");
+    }
+
+    function closeSidebarOnMobile() {
+      $("#sidebar").classList.remove("open");
+      $("#mask").classList.remove("show");
+    }
+
+    $("#saveSettingsBtn").addEventListener("click", () => { readSettingsFromForm(); toast("设置已保存。 "); fillSettings(); });
+    $("#fetchModelsBtn").addEventListener("click", fetchModels);
+    $("#testBtn").addEventListener("click", testConnection);
+    $("#sendBtn").addEventListener("click", sendMessage);
+    $("#stopBtn").addEventListener("click", () => abortController?.abort());
+    $("#newChatBtn").addEventListener("click", newChat);
+    $("#clearChatBtn").addEventListener("click", clearCurrentChat);
+    $("#copyLastBtn").addEventListener("click", copyLastReply);
+    $("#exportBtn").addEventListener("click", exportData);
+    $("#importBtn").addEventListener("click", () => $("#importFile").click());
+    $("#importFile").addEventListener("change", e => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value = ""; });
+    $("#openSideBtn").addEventListener("click", openSidebar);
+    $("#closeSideBtn").addEventListener("click", closeSidebarOnMobile);
+    $("#mask").addEventListener("click", closeSidebarOnMobile);
+
+    $("#modelSelect").addEventListener("change", () => {
+      if ($("#modelSelect").value) $("#manualModelInput").value = $("#modelSelect").value;
+      readSettingsFromForm();
+    });
+
+    $("#sessionList").addEventListener("click", event => {
+      const item = event.target.closest(".sessionItem");
+      if (!item) return;
+      state.activeSessionId = item.dataset.sessionId;
+      saveState();
+      renderChat();
+      closeSidebarOnMobile();
+    });
+
+    $("#promptInput").addEventListener("keydown", event => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    $("#promptInput").addEventListener("input", event => {
+      const el = event.target;
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 180) + "px";
+    });
+
+    fillSettings();
+    renderChat();
+  </script>
+</body>
+</html>
