@@ -2827,8 +2827,10 @@ async function testConnection() {
         : "连接成功";
 
     setSettingsStatus("测试成功：" + String(reply).slice(0, 80), "ok");
+showToast("测试连接成功");
   } catch (error) {
     setSettingsStatus("测试失败：" + error.message, "error");
+showToast("测试连接失败：" + error.message.slice(0, 80));
   } finally {
     abortController = null;
     $("#testBtn").disabled = false;
