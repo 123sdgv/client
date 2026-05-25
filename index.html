@@ -86,6 +86,11 @@ button {
   display: grid;
   grid-template-columns: 305px 1fr;
   overflow: hidden;
+  transition: grid-template-columns 0.2s ease;
+}
+
+body.sidebar-collapsed .app {
+  grid-template-columns: 0 1fr;
 }
 
 /* Sidebar */
@@ -99,6 +104,40 @@ button {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
+  transition: opacity 0.18s ease, transform 0.2s ease, border-color 0.18s ease;
+}
+
+body.sidebar-collapsed .sidebar {
+  opacity: 0;
+  pointer-events: none;
+  border-right-color: transparent;
+}
+
+.side-restore-btn {
+  position: fixed;
+  left: max(10px, env(safe-area-inset-left));
+  top: calc(16px + env(safe-area-inset-top));
+  z-index: 60;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.36), rgba(255,255,255,0.02)),
+    var(--card);
+  color: var(--text);
+  border-radius: 15px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 10px 28px rgba(64, 43, 24, 0.18), var(--inner);
+  display: none;
+}
+
+body.sidebar-collapsed .side-restore-btn {
+  display: inline-block;
+}
+
+.side-restore-btn:hover {
+  background: var(--hover);
 }
 
 .side-top {
@@ -106,9 +145,17 @@ button {
   border-bottom: 1px solid var(--line);
 }
 
+.brand-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .brand {
   margin-bottom: 15px;
   padding: 4px 4px 2px;
+  min-width: 0;
 }
 
 .brand-title {
@@ -168,6 +215,13 @@ button {
 
 .primary-btn:hover {
   opacity: 0.92;
+}
+
+.collapse-side-btn {
+  flex: 0 0 auto;
+  margin-top: 4px;
+  padding: 6px 9px;
+  font-size: 12px;
 }
 
 .search-wrap {
@@ -1141,18 +1195,30 @@ label {
     grid-template-columns: 1fr;
   }
 
+  body.sidebar-collapsed .app {
+    grid-template-columns: 1fr;
+  }
+
   .sidebar {
     position: fixed;
     z-index: 50;
     inset: 0 auto 0 0;
     width: min(88vw, 325px);
     transform: translateX(-105%);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.18s ease;
     box-shadow: var(--shadow);
   }
 
   .sidebar.open {
     transform: translateX(0);
+  }
+
+  body.sidebar-collapsed .sidebar {
+    transform: translateX(-105%);
+  }
+
+  .side-restore-btn {
+    display: none !important;
   }
 
   .mobile-menu {
@@ -1205,9 +1271,12 @@ label {
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="side-top">
-      <div class="brand">
-        <div class="brand-title">AI Chat</div>
-        <div class="brand-subtitle">本地 Key · 记忆 · 阶段上下文 · 图片压缩</div>
+      <div class="brand-row">
+        <div class="brand">
+          <div class="brand-title">AI Chat</div>
+          <div class="brand-subtitle">本地 Key · 记忆 · 阶段上下文 · 图片压缩</div>
+        </div>
+        <button class="mini-btn collapse-side-btn" id="collapseSideBtn" title="收回侧边栏">收回</button>
       </div>
       <button class="primary-btn" id="newChatBtn">新建对话</button>
       <div class="search-wrap">
@@ -1225,6 +1294,8 @@ label {
     <div class="chat-list" id="chatList"></div>
     <input id="importFile" type="file" accept="application/json,.json" hidden />
   </aside>
+
+  <button class="side-restore-btn" id="restoreSideBtn" title="展开侧边栏">侧边栏</button>
 
   <main class="main">
     <header class="header">
@@ -1421,6 +1492,7 @@ function makeId() {
 function defaultState() {
   return {
     theme: "light",
+    sidebarCollapsed: false,
     settings: {
       apiUrl: "https://api.openai.com/v1/chat/completions",
       apiKey: "",
@@ -1480,6 +1552,7 @@ function loadState() {
     return {
       ...base,
       ...saved,
+      sidebarCollapsed: Boolean(saved.sidebarCollapsed),
       settings: { ...base.settings, ...(saved.settings || {}) },
       memories: Array.isArray(saved.memories) ? saved.memories : base.memories,
       chats: Array.isArray(saved.chats) ? saved.chats.map(normalizeChat) : []
@@ -1545,6 +1618,21 @@ function showToast(message) {
 
 function applyTheme() {
   document.documentElement.setAttribute("data-theme", state.theme || "light");
+}
+
+function applySidebarState() {
+  document.body.classList.toggle("sidebar-collapsed", Boolean(state.sidebarCollapsed));
+}
+
+function collapseSidebar() {
+  state.sidebarCollapsed = true;
+  closeSidebar();
+  render();
+}
+
+function restoreSidebar() {
+  state.sidebarCollapsed = false;
+  render();
 }
 
 function createChat() {
@@ -1622,6 +1710,7 @@ function formatTime() {
 function render() {
   ensureChat();
   applyTheme();
+  applySidebarState();
   renderHeader();
   renderChatList();
   renderMessages();
@@ -2571,14 +2660,66 @@ function saveSettings(event) {
 }
 
 function modelsUrlFromApiUrl(apiUrl) {
-  const url = String(apiUrl || "").trim();
-  if (!url) return "";
+  const raw = String(apiUrl || "").trim();
+  if (!raw) return "";
 
-  if (url.includes("/chat/completions")) return url.replace(/\/chat\/completions.*$/, "/models");
-  if (url.includes("/responses")) return url.replace(/\/responses.*$/, "/models");
-  if (url.match(/\/v1\/?$/)) return url.replace(/\/?$/, "/models");
+  try {
+    const url = new URL(raw, window.location.href);
+    url.search = "";
+    url.hash = "";
 
-  return url.replace(/\/+$/, "") + "/models";
+    let path = url.pathname.replace(/\/+$/, "");
+
+    if (/\/models$/i.test(path)) {
+      url.pathname = path;
+      return url.toString();
+    }
+
+    if (/\/chat\/completions$/i.test(path)) {
+      path = path.replace(/\/chat\/completions$/i, "/models");
+    } else if (/\/responses$/i.test(path)) {
+      path = path.replace(/\/responses$/i, "/models");
+    } else if (/\/completions$/i.test(path)) {
+      path = path.replace(/\/completions$/i, "/models");
+    } else if (/\/v1$/i.test(path)) {
+      path = path + "/models";
+    } else {
+      path = path + "/models";
+    }
+
+    url.pathname = path;
+    return url.toString();
+  } catch (error) {
+    const clean = raw.split("?")[0].split("#")[0].replace(/\/+$/, "");
+
+    if (/\/models$/i.test(clean)) return clean;
+    if (/\/chat\/completions$/i.test(clean)) return clean.replace(/\/chat\/completions$/i, "/models");
+    if (/\/responses$/i.test(clean)) return clean.replace(/\/responses$/i, "/models");
+    if (/\/completions$/i.test(clean)) return clean.replace(/\/completions$/i, "/models");
+    if (/\/v1$/i.test(clean)) return clean + "/models";
+
+    return clean + "/models";
+  }
+}
+
+function extractModelIds(data) {
+  const candidates = [];
+
+  if (Array.isArray(data)) candidates.push(...data);
+  if (Array.isArray(data && data.data)) candidates.push(...data.data);
+  if (Array.isArray(data && data.models)) candidates.push(...data.models);
+  if (Array.isArray(data && data.data && data.data.models)) candidates.push(...data.data.models);
+
+  const ids = candidates
+    .map(item => {
+      if (typeof item === "string") return item;
+      if (!item || typeof item !== "object") return "";
+      return item.id || item.name || item.model || item.slug || "";
+    })
+    .filter(Boolean)
+    .map(String);
+
+  return [...new Set(ids)].sort((a, b) => a.localeCompare(b));
 }
 
 async function fetchModels() {
@@ -2599,12 +2740,13 @@ async function fetchModels() {
   const button = $("#fetchModelsBtn");
   button.disabled = true;
   button.textContent = "拉取中";
-  setSettingsStatus("正在拉取模型列表……");
+  setSettingsStatus("正在拉取模型列表：" + modelsUrl);
 
   try {
     const response = await fetch(modelsUrl, {
       method: "GET",
       headers: {
+        "Accept": "application/json",
         "Authorization": "Bearer " + apiKey
       }
     });
@@ -2617,18 +2759,16 @@ async function fetchModels() {
     } catch (error) {}
 
     if (!response.ok) {
-      throw new Error(data && data.error ? data.error.message : text || "HTTP " + response.status);
+      const message = data && data.error
+        ? (data.error.message || JSON.stringify(data.error))
+        : (text || "HTTP " + response.status);
+      throw new Error(message);
     }
 
-    const ids = Array.isArray(data && data.data)
-      ? data.data
-          .map(item => item.id || item.name)
-          .filter(Boolean)
-          .sort()
-      : [];
+    const ids = extractModelIds(data);
 
     if (!ids.length) {
-      throw new Error("接口返回成功，但没有找到模型列表。");
+      throw new Error("接口返回成功，但没有解析到模型 ID。返回格式可能不是 OpenAI /models 标准格式。");
     }
 
     state.settings.models = ids;
@@ -2643,7 +2783,7 @@ async function fetchModels() {
     setSettingsStatus("拉取成功：共 " + ids.length + " 个模型。请从上方列表点击选择。", "ok");
   } catch (error) {
     setSettingsStatus(
-      "拉取模型失败：" + error.message + "。如果是 CORS，说明这个网关不允许浏览器网页直接请求 /models。",
+      "拉取模型失败：" + error.message + "。已尝试从当前 API URL 推导 /models 地址；如果这里失败，通常是该网关不开放 /models、浏览器 CORS 被拦截，或服务商使用了非标准模型列表接口。你仍然可以手动填写模型名。",
       "error"
     );
   } finally {
@@ -3094,6 +3234,7 @@ function importData(file) {
       state = {
         ...base,
         ...imported,
+        sidebarCollapsed: Boolean(imported.sidebarCollapsed),
         settings: { ...base.settings, ...(imported.settings || {}) },
         memories: Array.isArray(imported.memories) ? imported.memories : [],
         chats: Array.isArray(imported.chats) ? imported.chats.map(normalizeChat) : []
@@ -3132,6 +3273,8 @@ $("#themeBtn").addEventListener("click", () => {
   render();
 });
 $("#resetBtn").addEventListener("click", resetAll);
+$("#collapseSideBtn").addEventListener("click", collapseSidebar);
+$("#restoreSideBtn").addEventListener("click", restoreSidebar);
 
 $("#chatSearchInput").addEventListener("input", event => {
   chatSearchKeyword = event.target.value.trim();
@@ -3139,7 +3282,10 @@ $("#chatSearchInput").addEventListener("input", event => {
 });
 
 $("#openSideBtn").addEventListener("click", () => {
+  state.sidebarCollapsed = false;
+  applySidebarState();
   $("#sidebar").classList.add("open");
+  saveState();
 });
 
 $("#chatList").addEventListener("click", event => {
