@@ -1432,9 +1432,10 @@ label {
     </div>
 
     <div class="dialog-foot">
-      <button type="button" class="btn" id="testBtn">测试连接</button>
-      <button type="submit" class="btn btn-primary">保存设置</button>
-    </div>
+  <div class="dialog-status" id="testStatus" style="flex:1;text-align:left;"></div>
+  <button type="button" class="btn" id="testBtn">测试连接</button>
+  <button type="submit" class="btn btn-primary">保存设置</button>
+</div>
   </form>
 </dialog>
 
@@ -2578,7 +2579,23 @@ function setSettingsStatus(message, type = "") {
     el.classList.add(type);
   }
 }
+  
+function setTestStatus(message, type = "") {
+  const el = $("#testStatus");
+  if (!el) return;
 
+  el.textContent = message || "";
+  el.className = "dialog-status";
+
+  if (message) {
+    el.classList.add("show");
+  }
+
+  if (type) {
+    el.classList.add(type);
+  }
+}
+  
 function renderSettingsModelList() {
   const box = $("#modelResults");
   if (!box) return;
@@ -2629,6 +2646,7 @@ function openSettings() {
 
   renderSettingsModelList();
   setSettingsStatus("");
+  setTestStatus("");
 
   $("#settingsDialog").showModal();
 }
@@ -2798,7 +2816,7 @@ async function testConnection() {
 
   $("#testBtn").disabled = true;
   $("#testBtn").textContent = "测试中";
-  setSettingsStatus("正在测试连接……");
+  setTestStatus("正在测试连接……");
 
   try {
     abortController = new AbortController();
@@ -2826,10 +2844,10 @@ async function testConnection() {
         ? data.choices[0].message.content
         : "连接成功";
 
-    setSettingsStatus("测试成功：" + String(reply).slice(0, 80), "ok");
+    setTestStatus("测试成功：" + String(reply).slice(0, 80), "ok");
 showToast("测试连接成功");
   } catch (error) {
-    setSettingsStatus("测试失败：" + error.message, "error");
+    setTestStatus("测试失败：" + error.message, "error");
 showToast("测试连接失败：" + error.message.slice(0, 80));
   } finally {
     abortController = null;
