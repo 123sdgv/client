@@ -12,37 +12,46 @@
 }
 
 :root {
-  --bg: #f6f6f4;
-  --panel: #ffffff;
-  --main: #fbfbfa;
-  --card: #ffffff;
-  --text: #111111;
-  --muted: #777777;
-  --muted-2: #999999;
-  --line: #e7e7e4;
-  --soft: #f0f0ed;
-  --hover: #eeeeeb;
-  --black: #111111;
-  --white: #ffffff;
-  --danger: #b91c1c;
-  --shadow: 0 18px 60px rgba(0,0,0,0.08);
-  --radius: 18px;
+  --bg: #d8d0bd;
+  --bg-2: #ece3cf;
+  --panel: #efe5cf;
+  --main: #e8deca;
+  --card: #f7edd9;
+  --card-2: #fff7e7;
+  --text: #2b2118;
+  --muted: #7e705e;
+  --muted-2: #9c8b76;
+  --line: rgba(105, 81, 52, 0.22);
+  --soft: #dfd2ba;
+  --hover: #eadcc5;
+  --black: #3a2b1f;
+  --white: #fff5df;
+  --danger: #9f2d20;
+  --ok: #426b38;
+  --shadow: 0 24px 70px rgba(64, 43, 24, 0.22);
+  --inner: inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -1px 0 rgba(82,55,28,0.12);
+  --radius: 20px;
 }
 
 [data-theme="dark"] {
-  --bg: #0d0d0d;
-  --panel: #151515;
-  --main: #101010;
-  --card: #1a1a1a;
-  --text: #f4f4f4;
-  --muted: #a5a5a5;
-  --muted-2: #777777;
-  --line: #292929;
-  --soft: #202020;
-  --hover: #262626;
-  --black: #f4f4f4;
-  --white: #111111;
-  --shadow: 0 18px 60px rgba(0,0,0,0.4);
+  --bg: #14110e;
+  --bg-2: #241d16;
+  --panel: #201811;
+  --main: #17120e;
+  --card: #2a2119;
+  --card-2: #34291f;
+  --text: #f4e7d0;
+  --muted: #b49f83;
+  --muted-2: #8f7b63;
+  --line: rgba(255, 229, 185, 0.16);
+  --soft: #30261d;
+  --hover: #3a2d22;
+  --black: #f0dfbd;
+  --white: #24170d;
+  --danger: #ff8b78;
+  --ok: #9fcf87;
+  --shadow: 0 24px 70px rgba(0,0,0,0.48);
+  --inner: inset 0 1px 0 rgba(255,255,255,0.09), inset 0 -1px 0 rgba(0,0,0,0.35);
 }
 
 html,
@@ -52,9 +61,12 @@ body {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  background: var(--bg);
   color: var(--text);
   overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 5%, rgba(255,255,255,0.45), transparent 32%),
+    radial-gradient(circle at 90% 12%, rgba(133,87,35,0.13), transparent 34%),
+    linear-gradient(135deg, var(--bg), var(--bg-2));
 }
 
 button,
@@ -73,15 +85,18 @@ button {
   height: 100vh;
   height: 100dvh;
   display: grid;
-  grid-template-columns: 290px 1fr;
+  grid-template-columns: 305px 1fr;
   overflow: hidden;
 }
 
 /* Sidebar */
 
 .sidebar {
-  background: var(--panel);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.28), transparent 45%),
+    var(--panel);
   border-right: 1px solid var(--line);
+  box-shadow: inset -1px 0 0 rgba(255,255,255,0.45);
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -93,33 +108,99 @@ button {
 }
 
 .brand {
-  margin-bottom: 16px;
+  margin-bottom: 15px;
+  padding: 4px 4px 2px;
 }
 
 .brand-title {
-  font-size: 21px;
-  font-weight: 850;
-  letter-spacing: -0.05em;
+  font-size: 23px;
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.75);
+}
+
+[data-theme="dark"] .brand-title {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.8);
 }
 
 .brand-subtitle {
   color: var(--muted);
   font-size: 12px;
-  margin-top: 3px;
+  margin-top: 4px;
+}
+
+.primary-btn,
+.small-btn,
+.icon-btn,
+.btn,
+.attach-btn,
+.send-btn,
+.msg-action,
+.mini-btn {
+  box-shadow:
+    0 4px 10px rgba(55, 36, 18, 0.12),
+    var(--inner);
+  transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease, opacity 0.12s ease;
+}
+
+.primary-btn:active,
+.small-btn:active,
+.icon-btn:active,
+.btn:active,
+.attach-btn:active,
+.send-btn:active,
+.msg-action:active,
+.mini-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.18);
 }
 
 .primary-btn {
   width: 100%;
-  border: 0;
-  border-radius: 14px;
-  background: var(--black);
+  border: 1px solid rgba(60, 39, 20, 0.45);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), transparent),
+    var(--black);
   color: var(--white);
   padding: 12px 14px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .primary-btn:hover {
-  opacity: 0.86;
+  opacity: 0.92;
+}
+
+.search-wrap {
+  margin-top: 10px;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.04), rgba(255,255,255,0.25)),
+    var(--card);
+  color: var(--text);
+  border-radius: 15px;
+  padding: 10px 12px 10px 34px;
+  outline: none;
+  box-shadow: inset 0 2px 8px rgba(88, 57, 22, 0.12);
+  font-size: 13px;
+}
+
+.search-wrap::before {
+  content: "⌕";
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.search-input:focus {
+  border-color: rgba(66, 43, 23, 0.55);
 }
 
 .side-actions {
@@ -132,12 +213,14 @@ button {
 
 .small-btn {
   border: 1px solid var(--line);
-  background: var(--card);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.36), rgba(255,255,255,0.02)),
+    var(--card);
   color: var(--text);
-  border-radius: 13px;
+  border-radius: 14px;
   padding: 10px 11px;
   font-size: 13px;
-  font-weight: 750;
+  font-weight: 800;
 }
 
 .small-btn:hover {
@@ -151,30 +234,36 @@ button {
 }
 
 .group-title {
-  padding: 14px 8px 7px;
+  padding: 14px 9px 7px;
   font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-weight: 950;
+  letter-spacing: 0.09em;
   color: var(--muted);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 
 .chat-item {
   border: 1px solid transparent;
-  border-radius: 15px;
+  border-radius: 17px;
   padding: 11px;
   cursor: pointer;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
   display: grid;
   gap: 5px;
 }
 
 .chat-item:hover {
-  background: var(--hover);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.32), transparent),
+    var(--hover);
 }
 
 .chat-item.active {
-  background: var(--soft);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.42), transparent),
+    var(--soft);
   border-color: var(--line);
+  box-shadow: inset 0 1px 6px rgba(78, 49, 19, 0.12);
 }
 
 .chat-row {
@@ -186,7 +275,7 @@ button {
 
 .chat-title {
   font-size: 13.5px;
-  font-weight: 850;
+  font-weight: 900;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -215,7 +304,7 @@ button {
   border: 1px solid var(--line);
   background: var(--card);
   color: var(--muted);
-  border-radius: 8px;
+  border-radius: 9px;
   padding: 3px 6px;
   font-size: 11px;
 }
@@ -229,7 +318,9 @@ button {
 
 .main {
   min-width: 0;
-  background: var(--main);
+  background:
+    radial-gradient(circle at 80% 10%, rgba(255,255,255,0.32), transparent 30%),
+    var(--main);
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: 100vh;
@@ -239,15 +330,16 @@ button {
 .header {
   padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
   border-bottom: 1px solid var(--line);
-  background: rgba(251,251,250,0.86);
-  backdrop-filter: blur(14px);
+  background: rgba(239, 229, 207, 0.82);
+  backdrop-filter: blur(15px);
   display: flex;
   align-items: center;
   gap: 10px;
+  box-shadow: 0 8px 24px rgba(65, 42, 18, 0.08);
 }
 
 [data-theme="dark"] .header {
-  background: rgba(16,16,16,0.86);
+  background: rgba(30, 23, 17, 0.86);
 }
 
 .mobile-menu {
@@ -256,12 +348,14 @@ button {
 
 .icon-btn {
   border: 1px solid var(--line);
-  background: var(--card);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.36), rgba(255,255,255,0.02)),
+    var(--card);
   color: var(--text);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 9px 11px;
   font-size: 12.5px;
-  font-weight: 800;
+  font-weight: 850;
 }
 
 .icon-btn:hover {
@@ -282,15 +376,16 @@ button {
   padding: 8px 9px;
   border-radius: 12px;
   font-size: 15px;
-  font-weight: 850;
+  font-weight: 900;
 }
 
 .title-input:focus {
   background: var(--soft);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .header-meta {
-  max-width: 320px;
+  max-width: 440px;
   color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
@@ -316,14 +411,20 @@ button {
   text-align: center;
   color: var(--muted);
   line-height: 1.7;
-  max-width: 540px;
-  padding: 30px 20px;
+  max-width: 560px;
+  padding: 34px 24px;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.45), rgba(255,255,255,0.08)),
+    var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow), var(--inner);
 }
 
 .empty strong {
   display: block;
   color: var(--text);
-  font-size: 30px;
+  font-size: 34px;
   letter-spacing: -0.07em;
   margin-bottom: 8px;
 }
@@ -365,27 +466,32 @@ button {
 }
 
 .avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 13px;
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
   border: 1px solid var(--line);
-  background: var(--soft);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.7), transparent 42%),
+    var(--soft);
   color: var(--text);
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 950;
+  box-shadow: 0 8px 18px rgba(65, 42, 18, 0.13), var(--inner);
 }
 
 .avatar.assistant {
-  background: var(--black);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 42%),
+    var(--black);
   color: var(--white);
-  border-color: var(--black);
+  border-color: rgba(60, 39, 20, 0.45);
 }
 
 .message-body {
-  max-width: calc(100% - 45px);
+  max-width: calc(100% - 47px);
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -397,34 +503,59 @@ button {
 }
 
 .bubble {
-  border-radius: 20px;
-  padding: 13px 16px;
+  border-radius: 22px;
+  padding: 14px 17px;
   line-height: 1.72;
   font-size: 14.5px;
   word-break: break-word;
 }
 
 .bubble.user {
-  background: var(--black);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.08)),
+    var(--black);
   color: var(--white);
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 7px;
   white-space: pre-wrap;
+  box-shadow: 0 14px 30px rgba(50, 32, 14, 0.22), var(--inner);
 }
 
 .bubble.assistant {
-  background: var(--card);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.55), rgba(255,255,255,0.08)),
+    var(--card);
   color: var(--text);
   border: 1px solid var(--line);
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 7px;
+  box-shadow: 0 14px 35px rgba(70, 47, 20, 0.13), var(--inner);
+}
+
+.bubble.assistant.generating:empty::before {
+  content: "AI 正在思考…";
+  color: var(--muted);
 }
 
 .bubble.system {
   background: var(--soft);
   color: var(--muted);
   border: 1px solid var(--line);
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 7px;
   white-space: pre-wrap;
   font-size: 13px;
+  box-shadow: var(--inner);
+}
+
+.message-meta {
+  color: var(--muted);
+  font-size: 11.5px;
+  padding: 0 4px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.message.user .message-meta {
+  justify-content: flex-end;
 }
 
 .msg-actions {
@@ -443,7 +574,7 @@ button {
   border: 1px solid var(--line);
   background: var(--card);
   color: var(--muted);
-  border-radius: 9px;
+  border-radius: 10px;
   padding: 4px 8px;
   font-size: 12px;
 }
@@ -511,11 +642,12 @@ button {
 
 .codebox {
   margin: 12px 0;
-  border-radius: 15px;
+  border-radius: 16px;
   overflow: hidden;
   background: #111111;
   color: #f4f4f5;
   border: 1px solid #252525;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22);
 }
 
 .codebar {
@@ -555,20 +687,26 @@ pre code {
 }
 
 .uploaded-image {
-  max-width: 240px;
-  max-height: 240px;
-  border-radius: 14px;
+  max-width: 260px;
+  max-height: 260px;
+  border-radius: 16px;
   border: 1px solid var(--line);
   display: block;
   margin-top: 8px;
+  box-shadow: 0 10px 28px rgba(64, 43, 24, 0.18);
 }
 
 /* Composer */
 
 .composer {
   border-top: 1px solid var(--line);
-  background: var(--main);
+  background: rgba(232, 222, 202, 0.9);
+  backdrop-filter: blur(12px);
   padding: 12px 18px calc(14px + env(safe-area-inset-bottom));
+}
+
+[data-theme="dark"] .composer {
+  background: rgba(23, 18, 14, 0.92);
 }
 
 .composer-inner {
@@ -587,11 +725,13 @@ pre code {
 
 .thumb {
   position: relative;
-  width: 64px;
-  height: 64px;
-  border-radius: 14px;
+  width: 76px;
+  height: 76px;
+  border-radius: 17px;
   overflow: hidden;
   border: 1px solid var(--line);
+  box-shadow: 0 8px 20px rgba(64, 43, 24, 0.15), var(--inner);
+  background: var(--card);
 }
 
 .thumb img {
@@ -608,24 +748,43 @@ pre code {
   background: rgba(0,0,0,0.72);
   color: white;
   border-radius: 999px;
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
   font-size: 12px;
+}
+
+.thumb-info {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  right: 4px;
+  color: white;
+  font-size: 9px;
+  background: rgba(0,0,0,0.48);
+  border-radius: 8px;
+  padding: 2px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .input-box {
   border: 1.5px solid var(--line);
-  background: var(--card);
-  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.04), rgba(255,255,255,0.23)),
+    var(--card);
+  border-radius: 24px;
   display: flex;
   align-items: flex-end;
   gap: 8px;
   padding: 9px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.035);
+  box-shadow:
+    inset 0 2px 9px rgba(80, 52, 22, 0.11),
+    0 8px 30px rgba(64, 43, 24, 0.08);
 }
 
 .input-box:focus-within {
-  border-color: var(--text);
+  border-color: rgba(60, 39, 20, 0.58);
 }
 
 textarea {
@@ -649,10 +808,10 @@ textarea {
 .attach-btn,
 .send-btn {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 15px;
   padding: 9px 12px;
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 900;
   background: var(--card);
   color: var(--text);
 }
@@ -662,9 +821,11 @@ textarea {
 }
 
 .send-btn {
-  background: var(--black);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.15), transparent),
+    var(--black);
   color: var(--white);
-  border-color: var(--black);
+  border-color: rgba(60, 39, 20, 0.45);
   min-width: 62px;
 }
 
@@ -683,13 +844,15 @@ textarea {
 /* Dialog */
 
 dialog {
-  width: min(760px, calc(100vw - 22px));
-  max-height: min(90vh, 760px);
-  border: 0;
-  border-radius: 24px;
-  background: var(--card);
+  width: min(800px, calc(100vw - 22px));
+  max-height: min(90vh, 780px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.32), rgba(255,255,255,0.03)),
+    var(--card);
   color: var(--text);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), var(--inner);
   overflow: hidden;
 }
 
@@ -708,7 +871,7 @@ dialog::backdrop {
 
 .dialog-head h2 {
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 950;
   letter-spacing: -0.03em;
 }
 
@@ -718,7 +881,7 @@ dialog::backdrop {
   flex-direction: column;
   gap: 14px;
   overflow: auto;
-  max-height: calc(min(90vh, 760px) - 125px);
+  max-height: calc(min(90vh, 780px) - 125px);
 }
 
 .dialog-foot {
@@ -732,7 +895,7 @@ dialog::backdrop {
 
 .section-title {
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 950;
   color: var(--text);
   margin-top: 3px;
 }
@@ -743,6 +906,12 @@ dialog::backdrop {
   gap: 12px;
 }
 
+.field-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
 label {
   display: block;
 }
@@ -750,7 +919,7 @@ label {
 .label-text {
   display: block;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 950;
   color: var(--muted);
   margin-bottom: 6px;
 }
@@ -758,15 +927,18 @@ label {
 .field {
   width: 100%;
   border: 1.5px solid var(--line);
-  background: var(--main);
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.04), rgba(255,255,255,0.18)),
+    var(--main);
   color: var(--text);
-  border-radius: 14px;
+  border-radius: 15px;
   padding: 11px 12px;
   outline: none;
+  box-shadow: inset 0 2px 8px rgba(76, 49, 20, 0.1);
 }
 
 .field:focus {
-  border-color: var(--text);
+  border-color: rgba(60, 39, 20, 0.58);
 }
 
 .field-textarea {
@@ -774,24 +946,39 @@ label {
   resize: vertical;
 }
 
+.inline-field-action {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.inline-field-action label {
+  flex: 1;
+}
+
 .dialog-note {
-  background: var(--soft);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.28), transparent),
+    var(--soft);
   border: 1px solid var(--line);
-  border-radius: 15px;
+  border-radius: 17px;
   padding: 12px 13px;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.6;
+  box-shadow: var(--inner);
 }
 
 .btn {
   border: 1px solid var(--line);
-  background: var(--card);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.03)),
+    var(--card);
   color: var(--text);
-  border-radius: 13px;
+  border-radius: 14px;
   padding: 9px 14px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 850;
 }
 
 .btn:hover {
@@ -799,9 +986,11 @@ label {
 }
 
 .btn-primary {
-  background: var(--black);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14), transparent),
+    var(--black);
   color: var(--white);
-  border-color: var(--black);
+  border-color: rgba(60, 39, 20, 0.45);
 }
 
 .btn-danger {
@@ -818,12 +1007,15 @@ label {
 
 .memory-card {
   border: 1px solid var(--line);
-  background: var(--main);
-  border-radius: 17px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.36), rgba(255,255,255,0.05)),
+    var(--main);
+  border-radius: 19px;
   padding: 13px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-shadow: var(--inner);
 }
 
 .memory-card.off {
@@ -831,7 +1023,7 @@ label {
 }
 
 .memory-title {
-  font-weight: 900;
+  font-weight: 950;
   font-size: 14px;
 }
 
@@ -868,15 +1060,17 @@ label {
   left: 50%;
   bottom: calc(18px + env(safe-area-inset-bottom));
   transform: translateX(-50%) translateY(8px);
-  background: #111111;
-  color: white;
-  border-radius: 14px;
+  background: #2d2117;
+  color: #fff5df;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 15px;
   padding: 10px 15px;
   font-size: 13px;
   opacity: 0;
   transition: opacity 0.18s ease, transform 0.18s ease;
   pointer-events: none;
   z-index: 99;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.28);
 }
 
 .toast.show {
@@ -893,7 +1087,7 @@ label {
     position: fixed;
     z-index: 50;
     inset: 0 auto 0 0;
-    width: min(86vw, 315px);
+    width: min(88vw, 325px);
     transform: translateX(-105%);
     transition: transform 0.2s ease;
     box-shadow: var(--shadow);
@@ -919,8 +1113,14 @@ label {
     padding: 8px 9px;
   }
 
-  .field-row {
+  .field-row,
+  .field-row-3 {
     grid-template-columns: 1fr;
+  }
+
+  .inline-field-action {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .messages {
@@ -949,9 +1149,12 @@ label {
     <div class="side-top">
       <div class="brand">
         <div class="brand-title">AI Chat</div>
-        <div class="brand-subtitle">本地 Key · 记忆 · 阶段上下文</div>
+        <div class="brand-subtitle">本地 Key · 记忆 · 阶段上下文 · 图片压缩</div>
       </div>
       <button class="primary-btn" id="newChatBtn">新建对话</button>
+      <div class="search-wrap">
+        <input class="search-input" id="chatSearchInput" placeholder="搜索聊天标题和内容" />
+      </div>
     </div>
 
     <div class="side-actions">
@@ -989,7 +1192,7 @@ label {
             <button class="send-btn" id="sendBtn">发送</button>
           </div>
         </div>
-        <div class="hint-line">当前阶段之前的消息不会发送给 AI；启用的记忆卡片始终会加入系统提示词。</div>
+        <div class="hint-line">图片会先压缩再发给模型；当前阶段之前的消息不会发送给 AI；启用的记忆卡片始终会加入系统提示词。</div>
       </div>
       <input id="imageInput" type="file" accept="image/*" multiple hidden />
     </footer>
@@ -1006,7 +1209,7 @@ label {
     <div class="dialog-body">
       <div class="dialog-note">
         API URL、API Key、聊天记录、阶段位置和记忆卡片都只保存在当前浏览器 localStorage。
-        如果接口不允许浏览器跨域请求，页面会请求失败，这属于服务端限制。
+        图片会压缩为 base64 data URL 后发送。若你的中转接口不支持 OpenAI Chat Completions 的 image_url 格式，图片仍可能失败。
       </div>
 
       <div class="section-title">API 配置</div>
@@ -1021,15 +1224,24 @@ label {
         <input class="field" id="apiKeyInput" type="password" autocomplete="off" placeholder="sk-..." />
       </label>
 
-      <div class="field-row">
+      <div class="inline-field-action">
         <label>
           <span class="label-text">模型名</span>
-          <input class="field" id="modelInput" placeholder="gpt-4o-mini / gpt-4.1-mini / deepseek-chat" />
+          <input class="field" id="modelInput" list="modelList" placeholder="gpt-4o-mini / gpt-4.1-mini / deepseek-chat" />
+          <datalist id="modelList"></datalist>
         </label>
+        <button type="button" class="btn" id="fetchModelsBtn">拉取模型</button>
+      </div>
 
+      <div class="field-row">
         <label>
           <span class="label-text">Temperature</span>
           <input class="field" id="temperatureInput" type="number" min="0" max="2" step="0.1" placeholder="0.7" />
+        </label>
+
+        <label>
+          <span class="label-text">最大输出 tokens，可留空</span>
+          <input class="field" id="maxTokensInput" type="number" min="1" step="1" placeholder="2048" />
         </label>
       </div>
 
@@ -1042,8 +1254,11 @@ label {
         </label>
 
         <label>
-          <span class="label-text">最大输出 tokens，可留空</span>
-          <input class="field" id="maxTokensInput" type="number" min="1" step="1" placeholder="2048" />
+          <span class="label-text">流式用量统计</span>
+          <select class="field" id="requestUsageInput">
+            <option value="true">尝试请求精确 usage，不支持会自动重试</option>
+            <option value="false">只用本地估算</option>
+          </select>
         </label>
       </div>
 
@@ -1051,6 +1266,30 @@ label {
         <span class="label-text">系统提示词</span>
         <textarea class="field field-textarea" id="systemPromptInput" placeholder="你是一个耐心、清楚、实用的中文 AI 助手。"></textarea>
       </label>
+
+      <div class="section-title">图片发送设置</div>
+
+      <div class="field-row-3">
+        <label>
+          <span class="label-text">图片最长边 px</span>
+          <input class="field" id="imageMaxSideInput" type="number" min="256" step="64" placeholder="1280" />
+        </label>
+
+        <label>
+          <span class="label-text">压缩质量 0.1-1</span>
+          <input class="field" id="imageQualityInput" type="number" min="0.1" max="1" step="0.05" placeholder="0.82" />
+        </label>
+
+        <label>
+          <span class="label-text">单图目标 KB</span>
+          <input class="field" id="imageMaxKbInput" type="number" min="100" step="50" placeholder="1200" />
+        </label>
+      </div>
+
+      <div class="dialog-note">
+        你之前“发图片很久不回复”的高概率原因有三个：原图太大、base64 塞进 localStorage 导致卡顿、或接口不支持 image_url 图片格式。
+        这个版本会先压缩图片，并且请求失败时会显示具体错误。
+      </div>
 
       <div class="section-title">数据</div>
 
@@ -1113,7 +1352,7 @@ label {
 <div class="toast" id="toast"></div>
 
 <script>
-const STORE_KEY = "ai-chat-frontend-stage-v2";
+const STORE_KEY = "ai-chat-frontend-stage-v3-skeuomorphism";
 
 function makeId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -1129,7 +1368,11 @@ function defaultState() {
       temperature: 0.7,
       maxTokens: "",
       contextLimit: 64,
-      systemPrompt: "你是一个耐心、清楚、实用的中文 AI 助手。"
+      systemPrompt: "你是一个耐心、清楚、实用的中文 AI 助手。",
+      imageMaxSide: 1280,
+      imageQuality: 0.82,
+      imageMaxKb: 1200,
+      requestUsage: true
     },
     memories: [
       {
@@ -1157,6 +1400,10 @@ let isSending = false;
 let abortController = null;
 let pendingImages = [];
 let editingMemoryId = null;
+let chatSearchKeyword = "";
+let thinkingTimer = null;
+let codeBlockStore = {};
+let storageWarned = false;
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => Array.from(document.querySelectorAll(selector));
@@ -1188,12 +1435,34 @@ function normalizeChat(chat) {
     createdAt: chat.createdAt || new Date().toISOString(),
     updatedAt: chat.updatedAt || new Date().toISOString(),
     stageStartIndex: Number(chat.stageStartIndex || 0),
-    messages: Array.isArray(chat.messages) ? chat.messages : []
+    totalTokens: Number(chat.totalTokens || 0),
+    tokensEstimated: Boolean(chat.tokensEstimated),
+    messages: Array.isArray(chat.messages) ? chat.messages.map(normalizeMessage) : []
+  };
+}
+
+function normalizeMessage(message) {
+  return {
+    id: message.id || makeId(),
+    role: message.role || "assistant",
+    content: message.content ?? "",
+    time: message.time || "",
+    tokenUsage: message.tokenUsage || null,
+    durationSec: Number(message.durationSec || 0),
+    elapsedSec: Number(message.elapsedSec || 0),
+    generating: Boolean(message.generating)
   };
 }
 
 function saveState() {
-  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  } catch (error) {
+    if (!storageWarned) {
+      storageWarned = true;
+      showToast("本地存储空间不足：图片可能过多或过大，建议导出备份后开新阶段。");
+    }
+  }
 }
 
 function escapeHtml(text) {
@@ -1210,7 +1479,7 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.add("show");
   clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+  window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
 }
 
 function applyTheme() {
@@ -1224,6 +1493,8 @@ function createChat() {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     stageStartIndex: 0,
+    totalTokens: 0,
+    tokensEstimated: false,
     messages: []
   };
 }
@@ -1297,6 +1568,13 @@ function render() {
   saveState();
 }
 
+function formatTokenCount(n) {
+  const value = Number(n || 0);
+  if (value >= 1000000) return (value / 1000000).toFixed(2) + "M";
+  if (value >= 1000) return (value / 1000).toFixed(1) + "K";
+  return String(value);
+}
+
 function renderHeader() {
   const chat = currentChat();
   $("#titleInput").value = chat.title || "新对话";
@@ -1306,9 +1584,10 @@ function renderHeader() {
   const limit = Number(state.settings.contextLimit || 0);
   const stageText = chat.stageStartIndex > 0 ? "新阶段中" : "完整阶段";
   const contextText = limit > 0 ? "上下文 " + limit : "上下文全部";
+  const tokenText = "累计 " + (chat.tokensEstimated ? "约 " : "") + formatTokenCount(chat.totalTokens || 0) + " tokens";
 
   $("#headerMeta").textContent = state.settings.apiKey
-    ? model + " · " + contextText + " · " + stageText + " · " + enabledMemoryCount + " 条记忆"
+    ? model + " · " + contextText + " · " + stageText + " · " + enabledMemoryCount + " 条记忆 · " + tokenText
     : "未配置 API";
 }
 
@@ -1323,14 +1602,31 @@ function groupName(chat) {
   return "更早";
 }
 
+function chatMatchesSearch(chat, keyword) {
+  if (!keyword) return true;
+
+  const q = keyword.toLowerCase();
+  const haystack = [
+    chat.title || "",
+    ...chat.messages.map(m => textFromContent(m.content))
+  ].join("\n").toLowerCase();
+
+  return haystack.includes(q);
+}
+
 function renderChatList() {
   const groups = { "今天": [], "昨天": [], "近 7 天": [], "更早": [] };
+  const filtered = state.chats.filter(chat => chatMatchesSearch(chat, chatSearchKeyword));
 
-  state.chats.forEach(chat => {
+  filtered.forEach(chat => {
     groups[groupName(chat)].push(chat);
   });
 
   let html = "";
+
+  if (!filtered.length) {
+    html = '<div class="status" style="padding:18px 10px;">没有搜到相关对话。</div>';
+  }
 
   Object.keys(groups).forEach(name => {
     if (!groups[name].length) return;
@@ -1341,6 +1637,7 @@ function renderChatList() {
       const last = [...chat.messages].reverse().find(m => m.role !== "system");
       const preview = last ? textFromContent(last.content).slice(0, 72) : "空对话";
       const stageBadge = chat.stageStartIndex > 0 ? " · 新阶段" : "";
+      const tokenBadge = chat.totalTokens ? " · " + formatTokenCount(chat.totalTokens) + "t" : "";
 
       html += `
         <div class="chat-item ${chat.id === state.currentChatId ? "active" : ""}" data-chat-id="${chat.id}">
@@ -1351,7 +1648,7 @@ function renderChatList() {
               <button class="mini-btn" onclick="deleteChatById('${chat.id}', event)">删</button>
             </div>
           </div>
-          <div class="chat-preview">${escapeHtml(preview + stageBadge)}</div>
+          <div class="chat-preview">${escapeHtml(preview + stageBadge + tokenBadge)}</div>
         </div>
       `;
     });
@@ -1363,12 +1660,13 @@ function renderChatList() {
 function renderMessages() {
   const chat = currentChat();
   const box = $("#messages");
+  codeBlockStore = {};
 
   if (!chat.messages.length) {
     box.innerHTML = `
       <div class="empty">
         <strong>AI Chat</strong>
-        干净的本地 AI 聊天前端。支持 64 条上下文、新阶段截断、记忆卡片、图片输入、消息编辑和从任意位置重新回复。
+        拟物风格的本地 AI 聊天前端。支持聊天全文搜索、新阶段截断、记忆卡片、图片压缩输入、模型拉取、思考计时和 token 累计统计。
       </div>
     `;
     return;
@@ -1398,6 +1696,7 @@ function messageHtml(message, index) {
         <div class="avatar assistant">记</div>
         <div class="message-body">
           <div class="bubble system">${escapeHtml(textFromContent(message.content))}</div>
+          ${messageMetaHtml(message)}
           <div class="msg-actions">
             <button class="msg-action" onclick="deleteMessage(${index})">删除</button>
           </div>
@@ -1414,7 +1713,7 @@ function messageHtml(message, index) {
 
   const bubble = isUser
     ? '<div class="bubble user">' + renderUserContent(message.content) + '</div>'
-    : '<div class="bubble assistant">' + renderMarkdown(textFromContent(message.content)) + '</div>';
+    : '<div class="bubble assistant ' + (message.generating ? "generating" : "") + '">' + renderMarkdown(textFromContent(message.content)) + '</div>';
 
   const actions = `
     <button class="msg-action" onclick="editMessage(${index})">编辑</button>
@@ -1425,14 +1724,41 @@ function messageHtml(message, index) {
   `;
 
   return `
-    <div class="message ${role}">
+    <div class="message ${role}" data-message-id="${escapeHtml(message.id)}">
       ${avatar}
       <div class="message-body">
         ${bubble}
+        ${messageMetaHtml(message)}
         <div class="msg-actions">${actions}</div>
       </div>
     </div>
   `;
+}
+
+function messageMetaHtml(message) {
+  const parts = [];
+
+  if (message.time) parts.push(message.time);
+
+  if (message.generating) {
+    const sec = Number(message.elapsedSec || 0);
+    parts.push("思考/生成 " + sec + "s");
+  } else if (message.durationSec) {
+    parts.push("耗时 " + message.durationSec + "s");
+  }
+
+  if (message.tokenUsage) {
+    const u = message.tokenUsage;
+    const mark = u.estimated ? "约 " : "";
+    parts.push("本轮 " + mark + formatTokenCount(u.total_tokens) + " tokens");
+    if (typeof u.prompt_tokens === "number" && typeof u.completion_tokens === "number") {
+      parts.push("输入 " + mark + formatTokenCount(u.prompt_tokens) + " / 输出 " + mark + formatTokenCount(u.completion_tokens));
+    }
+  }
+
+  if (!parts.length) return "";
+
+  return `<div class="message-meta assistant-thinking-meta" data-message-id="${escapeHtml(message.id || "")}">${parts.map(escapeHtml).join("<span>·</span>")}</div>`;
 }
 
 function renderUserContent(content) {
@@ -1453,7 +1779,6 @@ function renderUserContent(content) {
 
 function renderMarkdown(rawText) {
   let text = escapeHtml(rawText || "");
-  const codeBlocks = [];
 
   text = text.replace(/```([\w#+.-]*)\n?([\s\S]*?)```/g, function(_, lang, code) {
     const decoded = code
@@ -1463,14 +1788,18 @@ function renderMarkdown(rawText) {
       .replaceAll("&quot;", '"')
       .replaceAll("&#039;", "'");
 
-    const token = "@@CODE_BLOCK_" + codeBlocks.length + "@@";
+    const id = makeId();
+    codeBlockStore[id] = decoded;
 
-    codeBlocks.push({
-      lang: lang || "code",
-      code: decoded
-    });
-
-    return token;
+    return `
+      <div class="codebox">
+        <div class="codebar">
+          <span class="code-lang">${escapeHtml(lang || "code")}</span>
+          <button class="copy-code" data-code-id="${id}">复制代码</button>
+        </div>
+        <pre><code>${escapeHtml(decoded)}</code></pre>
+      </div>
+    `;
   });
 
   text = text.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
@@ -1507,7 +1836,7 @@ function renderMarkdown(rawText) {
       trimmed.startsWith("<ul") ||
       trimmed.startsWith("<ol") ||
       trimmed.startsWith("<blockquote") ||
-      trimmed.startsWith("@@CODE_BLOCK_")
+      trimmed.startsWith("<div class=\"codebox\"")
     ) {
       return trimmed.replaceAll("\n", "<br>");
     }
@@ -1515,33 +1844,18 @@ function renderMarkdown(rawText) {
     return "<p>" + trimmed.replaceAll("\n", "<br>") + "</p>";
   }).join("");
 
-  codeBlocks.forEach((block, index) => {
-    const html = `
-      <div class="codebox">
-        <div class="codebar">
-          <span class="code-lang">${escapeHtml(block.lang)}</span>
-          <button class="copy-code" data-code-index="${index}">复制代码</button>
-        </div>
-        <pre><code>${escapeHtml(block.code)}</code></pre>
-      </div>
-    `;
-
-    text = text.replace("@@CODE_BLOCK_" + index + "@@", html);
-  });
-
-  window.currentCodeBlocks = codeBlocks;
   return text;
 }
 
 function bindCopyCodeButtons() {
   $$(".copy-code").forEach(button => {
     button.addEventListener("click", () => {
-      const index = Number(button.dataset.codeIndex);
-      const block = window.currentCodeBlocks && window.currentCodeBlocks[index];
+      const id = button.dataset.codeId;
+      const code = codeBlockStore[id];
 
-      if (!block) return;
+      if (!code) return;
 
-      navigator.clipboard.writeText(block.code);
+      navigator.clipboard.writeText(code);
       button.textContent = "已复制";
       setTimeout(() => button.textContent = "复制代码", 1200);
     });
@@ -1565,7 +1879,7 @@ function buildSystemPrompt() {
   return (base + "\n\n以下是用户保存的记忆卡片。即使当前对话开启了新阶段，你也只能依靠这些记忆和当前阶段内的消息来回答：\n" + memoryText).trim();
 }
 
-function buildApiMessages(chat) {
+function buildApiMessages(chat, excludeMessageId) {
   const result = [];
   const systemPrompt = buildSystemPrompt();
 
@@ -1577,6 +1891,7 @@ function buildApiMessages(chat) {
 
   let history = chat.messages
     .slice(stageStart)
+    .filter(m => m.id !== excludeMessageId)
     .filter(m => m.role === "user" || m.role === "assistant")
     .map(m => ({ role: m.role, content: m.content }));
 
@@ -1587,6 +1902,10 @@ function buildApiMessages(chat) {
   }
 
   return result.concat(history);
+}
+
+function hasImageInMessages(messages) {
+  return messages.some(m => Array.isArray(m.content) && m.content.some(part => part.type === "image_url"));
 }
 
 async function callApi(messages, stream) {
@@ -1607,17 +1926,96 @@ async function callApi(messages, stream) {
     body.max_tokens = Number(settings.maxTokens);
   }
 
-  const response = await fetch(settings.apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + settings.apiKey
-    },
-    body: JSON.stringify(body),
-    signal: abortController ? abortController.signal : undefined
-  });
+  if (stream && settings.requestUsage !== false && settings.requestUsage !== "false") {
+    body.stream_options = { include_usage: true };
+  }
+
+  async function doFetch(payload) {
+    return fetch(settings.apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + settings.apiKey
+      },
+      body: JSON.stringify(payload),
+      signal: abortController ? abortController.signal : undefined
+    });
+  }
+
+  let response = await doFetch(body);
+
+  if (!response.ok && body.stream_options) {
+    const firstError = await response.text();
+    const retryBody = { ...body };
+    delete retryBody.stream_options;
+    response = await doFetch(retryBody);
+    response.firstErrorText = firstError;
+  }
 
   return response;
+}
+
+function estimateStringTokens(text) {
+  const s = String(text || "");
+  if (!s) return 0;
+
+  let ascii = 0;
+  let nonAscii = 0;
+
+  for (const ch of s) {
+    if (ch.charCodeAt(0) < 128) ascii++;
+    else nonAscii++;
+  }
+
+  return Math.ceil(ascii / 4 + nonAscii / 1.7);
+}
+
+function estimateContentTokens(content) {
+  if (typeof content === "string") return estimateStringTokens(content);
+
+  if (Array.isArray(content)) {
+    return content.reduce((sum, part) => {
+      if (part.type === "text") return sum + estimateStringTokens(part.text);
+      if (part.type === "image_url") return sum + 850;
+      return sum;
+    }, 0);
+  }
+
+  return estimateStringTokens(String(content || ""));
+}
+
+function estimateMessagesTokens(messages) {
+  return messages.reduce((sum, message) => {
+    return sum + 4 + estimateStringTokens(message.role) + estimateContentTokens(message.content);
+  }, 3);
+}
+
+function startThinkingTimer(message) {
+  clearInterval(thinkingTimer);
+  message.elapsedSec = 0;
+
+  const started = Date.now();
+
+  thinkingTimer = setInterval(() => {
+    message.elapsedSec = Math.floor((Date.now() - started) / 1000);
+    updateMessageMeta(message);
+  }, 500);
+}
+
+function stopThinkingTimer() {
+  clearInterval(thinkingTimer);
+  thinkingTimer = null;
+}
+
+function updateMessageMeta(message) {
+  const meta = document.querySelector('.assistant-thinking-meta[data-message-id="' + CSS.escape(message.id) + '"]');
+  if (!meta) return;
+
+  const temp = document.createElement("div");
+  temp.innerHTML = messageMetaHtml(message);
+  const next = temp.firstElementChild;
+
+  if (next) meta.innerHTML = next.innerHTML;
 }
 
 async function sendMessage() {
@@ -1644,9 +2042,14 @@ async function sendMessage() {
     : text;
 
   chat.messages.push({
+    id: makeId(),
     role: "user",
     content,
-    time: formatTime()
+    time: formatTime(),
+    tokenUsage: null,
+    durationSec: 0,
+    elapsedSec: 0,
+    generating: false
   });
 
   if (!chat.title || chat.title === "新对话") {
@@ -1670,20 +2073,37 @@ async function generateReply(chat) {
   $("#sendBtn").textContent = "停止";
 
   const assistantMessage = {
+    id: makeId(),
     role: "assistant",
     content: "",
-    time: formatTime()
+    time: formatTime(),
+    tokenUsage: null,
+    durationSec: 0,
+    elapsedSec: 0,
+    generating: true
   };
 
   chat.messages.push(assistantMessage);
   renderMessages();
+  startThinkingTimer(assistantMessage);
+
+  let usageFromApi = null;
+  let promptEstimate = 0;
+  const startedAt = Date.now();
 
   try {
-    const response = await callApi(buildApiMessages(chat), true);
+    const apiMessages = buildApiMessages(chat, assistantMessage.id);
+    promptEstimate = estimateMessagesTokens(apiMessages);
+
+    if (hasImageInMessages(apiMessages)) {
+      showToast("图片已压缩并发送，若接口不支持 image_url 会返回错误。");
+    }
+
+    const response = await callApi(apiMessages, true);
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText || "HTTP " + response.status);
+      throw new Error(errorText || response.firstErrorText || "HTTP " + response.status);
     }
 
     if (!response.body) {
@@ -1710,13 +2130,17 @@ async function generateReply(chat) {
 
         try {
           const json = JSON.parse(data);
-          const delta = json.choices && json.choices[0] && json.choices[0].delta
-            ? json.choices[0].delta.content
-            : "";
+
+          if (json.usage) {
+            usageFromApi = json.usage;
+          }
+
+          const choice = json.choices && json.choices[0] ? json.choices[0] : null;
+          const delta = choice && choice.delta ? choice.delta.content : "";
 
           if (delta) {
             assistantMessage.content += delta;
-            updateLastAssistantBubble(assistantMessage.content);
+            updateLastAssistantBubble(assistantMessage);
           }
         } catch (error) {}
       }
@@ -1728,6 +2152,29 @@ async function generateReply(chat) {
       assistantMessage.content = "接口返回成功，但没有解析到文本内容。";
     }
 
+    assistantMessage.generating = false;
+    assistantMessage.durationSec = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+    assistantMessage.elapsedSec = assistantMessage.durationSec;
+
+    const completionEstimate = estimateContentTokens(assistantMessage.content);
+    const usage = usageFromApi
+      ? {
+          prompt_tokens: Number(usageFromApi.prompt_tokens || promptEstimate),
+          completion_tokens: Number(usageFromApi.completion_tokens || completionEstimate),
+          total_tokens: Number(usageFromApi.total_tokens || promptEstimate + completionEstimate),
+          estimated: false
+        }
+      : {
+          prompt_tokens: promptEstimate,
+          completion_tokens: completionEstimate,
+          total_tokens: promptEstimate + completionEstimate,
+          estimated: true
+        };
+
+    assistantMessage.tokenUsage = usage;
+    chat.totalTokens = Number(chat.totalTokens || 0) + Number(usage.total_tokens || 0);
+    chat.tokensEstimated = Boolean(chat.tokensEstimated || usage.estimated);
+
     render();
   } catch (error) {
     if (error.name === "AbortError") {
@@ -1737,12 +2184,15 @@ async function generateReply(chat) {
       render();
     } else {
       assistantMessage.role = "system";
+      assistantMessage.generating = false;
+      assistantMessage.durationSec = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
       assistantMessage.content =
         "请求失败：" + error.message +
-        "\n\n常见原因：API URL 写错、Key 无效、模型名不对、模型不支持图片，或服务端不允许浏览器跨域请求。";
+        "\n\n常见原因：API URL 写错、Key 无效、模型名不对、模型不支持图片、接口不支持 image_url/base64 图片，或服务端不允许浏览器跨域请求。";
       render();
     }
   } finally {
+    stopThinkingTimer();
     isSending = false;
     abortController = null;
     $("#sendBtn").classList.remove("stop");
@@ -1750,7 +2200,7 @@ async function generateReply(chat) {
   }
 }
 
-function updateLastAssistantBubble(content) {
+function updateLastAssistantBubble(message) {
   const assistantMessages = $$(".message.assistant");
   const last = assistantMessages[assistantMessages.length - 1];
 
@@ -1759,8 +2209,9 @@ function updateLastAssistantBubble(content) {
   const bubble = last.querySelector(".bubble.assistant");
   if (!bubble) return;
 
-  bubble.innerHTML = renderMarkdown(content);
+  bubble.innerHTML = renderMarkdown(message.content);
   bindCopyCodeButtons();
+  updateMessageMeta(message);
 
   const box = $("#messages");
   box.scrollTop = box.scrollHeight;
@@ -1827,9 +2278,14 @@ function startNewStage() {
 
   chat.stageStartIndex = chat.messages.length;
   chat.messages.push({
+    id: makeId(),
     role: "system",
     content: "已开启新阶段。AI 不会再读取此处之前的聊天记录，只会读取启用的记忆卡片和后续消息。",
-    time: formatTime()
+    time: formatTime(),
+    tokenUsage: null,
+    durationSec: 0,
+    elapsedSec: 0,
+    generating: false
   });
   chat.stageStartIndex = chat.messages.length;
   chat.updatedAt = new Date().toISOString();
@@ -1966,12 +2422,16 @@ function openSettings() {
   $("#maxTokensInput").value = s.maxTokens || "";
   $("#contextLimitInput").value = s.contextLimit ?? 64;
   $("#systemPromptInput").value = s.systemPrompt || "";
+  $("#imageMaxSideInput").value = s.imageMaxSide ?? 1280;
+  $("#imageQualityInput").value = s.imageQuality ?? 0.82;
+  $("#imageMaxKbInput").value = s.imageMaxKb ?? 1200;
+  $("#requestUsageInput").value = String(s.requestUsage !== false && s.requestUsage !== "false");
 
   $("#settingsDialog").showModal();
 }
 
 function saveSettings(event) {
-  event.preventDefault();
+  if (event && event.preventDefault) event.preventDefault();
 
   state.settings = {
     apiUrl: $("#apiUrlInput").value.trim(),
@@ -1980,17 +2440,96 @@ function saveSettings(event) {
     temperature: Number($("#temperatureInput").value || 0.7),
     maxTokens: $("#maxTokensInput").value.trim(),
     contextLimit: Number($("#contextLimitInput").value || 64),
-    systemPrompt: $("#systemPromptInput").value.trim()
+    systemPrompt: $("#systemPromptInput").value.trim(),
+    imageMaxSide: Number($("#imageMaxSideInput").value || 1280),
+    imageQuality: Number($("#imageQualityInput").value || 0.82),
+    imageMaxKb: Number($("#imageMaxKbInput").value || 1200),
+    requestUsage: $("#requestUsageInput").value === "true"
   };
 
   saveState();
   renderHeader();
-  $("#settingsDialog").close();
-  showToast("设置已保存");
+
+  if (event && event.type === "submit") {
+    $("#settingsDialog").close();
+    showToast("设置已保存");
+  }
+}
+
+function modelsUrlFromApiUrl(apiUrl) {
+  const url = String(apiUrl || "").trim();
+  if (!url) return "";
+
+  if (url.includes("/chat/completions")) return url.replace(/\/chat\/completions.*$/, "/models");
+  if (url.includes("/responses")) return url.replace(/\/responses.*$/, "/models");
+  if (url.match(/\/v1\/?$/)) return url.replace(/\/?$/, "/models");
+
+  return url.replace(/\/+$/, "") + "/models";
+}
+
+async function fetchModels() {
+  const apiUrl = $("#apiUrlInput").value.trim();
+  const apiKey = $("#apiKeyInput").value.trim();
+  const modelsUrl = modelsUrlFromApiUrl(apiUrl);
+
+  if (!modelsUrl) {
+    alert("请先填写 API URL。");
+    return;
+  }
+
+  if (!apiKey) {
+    alert("请先填写 API Key。");
+    return;
+  }
+
+  const button = $("#fetchModelsBtn");
+  button.disabled = true;
+  button.textContent = "拉取中";
+
+  try {
+    const response = await fetch(modelsUrl, {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + apiKey
+      }
+    });
+
+    const text = await response.text();
+    let data = null;
+
+    try {
+      data = JSON.parse(text);
+    } catch (error) {}
+
+    if (!response.ok) {
+      throw new Error(data && data.error ? data.error.message : text || "HTTP " + response.status);
+    }
+
+    const ids = Array.isArray(data && data.data)
+      ? data.data.map(item => item.id || item.name).filter(Boolean).sort()
+      : [];
+
+    if (!ids.length) {
+      throw new Error("接口返回成功，但没有找到模型列表。");
+    }
+
+    $("#modelList").innerHTML = ids.map(id => '<option value="' + escapeHtml(id) + '"></option>').join("");
+
+    if (!$("#modelInput").value.trim()) {
+      $("#modelInput").value = ids[0];
+    }
+
+    showToast("已拉取 " + ids.length + " 个模型");
+  } catch (error) {
+    alert("拉取模型失败：\n" + error.message + "\n\n提示：如果浏览器提示 CORS，这是接口服务端不允许网页直连。");
+  } finally {
+    button.disabled = false;
+    button.textContent = "拉取模型";
+  }
 }
 
 async function testConnection() {
-  saveSettings(new Event("submit"));
+  saveSettings();
 
   $("#testBtn").disabled = true;
   $("#testBtn").textContent = "测试中";
@@ -2268,20 +2807,9 @@ ${conversation}
   }
 }
 
-async function addImages(files) {
-  const imageFiles = Array.from(files).filter(file => file.type.startsWith("image/"));
-
-  for (const file of imageFiles) {
-    if (file.size > 5 * 1024 * 1024) {
-      showToast("图片超过 5MB，已跳过");
-      continue;
-    }
-
-    const url = await fileToDataUrl(file);
-    pendingImages.push({ name: file.name, url });
-  }
-
-  renderImagePreview();
+function dataUrlBytes(dataUrl) {
+  const base64 = String(dataUrl || "").split(",")[1] || "";
+  return Math.ceil(base64.length * 0.75);
 }
 
 function fileToDataUrl(file) {
@@ -2293,11 +2821,107 @@ function fileToDataUrl(file) {
   });
 }
 
+function loadImage(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = dataUrl;
+  });
+}
+
+async function compressImageFile(file) {
+  const settings = state.settings;
+  const maxSide = Number(settings.imageMaxSide || 1280);
+  const targetBytes = Number(settings.imageMaxKb || 1200) * 1024;
+  const startQuality = Math.min(1, Math.max(0.1, Number(settings.imageQuality || 0.82)));
+
+  const originalUrl = await fileToDataUrl(file);
+
+  if (file.type === "image/gif" || file.type === "image/svg+xml") {
+    return {
+      url: originalUrl,
+      size: dataUrlBytes(originalUrl),
+      width: 0,
+      height: 0,
+      note: "未压缩"
+    };
+  }
+
+  const image = await loadImage(originalUrl);
+  const ratio = Math.min(1, maxSide / Math.max(image.width, image.height));
+  const width = Math.max(1, Math.round(image.width * ratio));
+  const height = Math.max(1, Math.round(image.height * ratio));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(image, 0, 0, width, height);
+
+  let quality = startQuality;
+  let url = canvas.toDataURL("image/jpeg", quality);
+  let size = dataUrlBytes(url);
+
+  while (size > targetBytes && quality > 0.35) {
+    quality = Math.max(0.35, quality - 0.08);
+    url = canvas.toDataURL("image/jpeg", quality);
+    size = dataUrlBytes(url);
+  }
+
+  return {
+    url,
+    size,
+    width,
+    height,
+    note: Math.round(file.size / 1024) + "KB → " + Math.round(size / 1024) + "KB"
+  };
+}
+
+async function addImages(files) {
+  const imageFiles = Array.from(files).filter(file => file.type.startsWith("image/"));
+
+  if (!imageFiles.length) return;
+
+  showToast("正在压缩图片…");
+
+  for (const file of imageFiles) {
+    try {
+      if (file.size > 25 * 1024 * 1024) {
+        showToast("图片超过 25MB，已跳过");
+        continue;
+      }
+
+      const compressed = await compressImageFile(file);
+
+      if (compressed.size > 6 * 1024 * 1024) {
+        showToast("压缩后仍超过 6MB，已跳过：" + file.name);
+        continue;
+      }
+
+      pendingImages.push({
+        name: file.name,
+        url: compressed.url,
+        size: compressed.size,
+        width: compressed.width,
+        height: compressed.height,
+        note: compressed.note
+      });
+    } catch (error) {
+      showToast("图片处理失败：" + file.name);
+    }
+  }
+
+  renderImagePreview();
+}
+
 function renderImagePreview() {
   $("#imagePreview").innerHTML = pendingImages.map((image, index) => `
     <div class="thumb">
       <img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.name)}" />
       <button onclick="removeImage(${index})">×</button>
+      <div class="thumb-info">${escapeHtml(image.note || Math.round((image.size || 0) / 1024) + "KB")}</div>
     </div>
   `).join("");
 }
@@ -2384,6 +3008,11 @@ $("#themeBtn").addEventListener("click", () => {
 });
 $("#resetBtn").addEventListener("click", resetAll);
 
+$("#chatSearchInput").addEventListener("input", event => {
+  chatSearchKeyword = event.target.value.trim();
+  renderChatList();
+});
+
 $("#openSideBtn").addEventListener("click", () => {
   $("#sidebar").classList.add("open");
 });
@@ -2447,6 +3076,7 @@ $("#importFile").addEventListener("change", event => {
 $("#closeSettingsBtn").addEventListener("click", () => $("#settingsDialog").close());
 $("#settingsForm").addEventListener("submit", saveSettings);
 $("#testBtn").addEventListener("click", testConnection);
+$("#fetchModelsBtn").addEventListener("click", fetchModels);
 $("#exportBtn").addEventListener("click", exportData);
 $("#importBtn").addEventListener("click", () => $("#importFile").click());
 
